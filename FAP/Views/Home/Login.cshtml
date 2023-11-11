@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+
+<script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-app.js"></script>
+
+<!-- Add additional services you want to use -->
+<script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-auth.js"></script>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyCbuT_qJcdszFMyNC9A6zs_NCkLAVNNZvA",
+        authDomain: "testweb-a909c.firebaseapp.com",
+        projectId: "testweb-a909c",
+        storageBucket: "testweb-a909c.appspot.com",
+        messagingSenderId: "608632241788",
+        appId: "1:608632241788:web:97c5e05da8b7556b8b13f9"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+</script>
+
+<h2>Login</h2>
+<p class="text-danger">@ViewBag.ErrorMessage</p>
+
+<p class="btn btn-danger m-0" onclick="loginWithGoogle()"><i class="uil uil-google"></i> Login with Google</p>
+
+<form asp-action="Login" method="post" class="loginGoogleForm" style="display: none;">
+    <input type="hidden" id="emailInput" name="email" value="?">
+    <input type="hidden" id="nameInput" name="name" value="?">
+</form>
+
+<script>
+    const provider = new firebase.auth.GoogleAuthProvider();
+
+    function loginWithGoogle() {
+
+        firebase.auth().signInWithPopup(provider).then(function (result) {
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            let token = result.credential.accessToken;
+            // The signed-in user info.
+            let user = result.user;
+
+            if (!user.email.includes('@@fpt.edu.vn')) {
+                alert('Mail FPT require');
+                return;
+            }
+
+            let form = document.querySelector('.loginGoogleForm');
+
+            let input = form.querySelector('#emailInput');
+            input.value = user.email;
+            let name = form.querySelector('#nameInput');
+            name.value = user.displayName;
+
+            form.submit();
+        });
+    }
+</script>
