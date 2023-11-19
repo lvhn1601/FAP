@@ -8,6 +8,8 @@ namespace FAP.Models
         public int ClassId { get; set; }
         public DateTime Date { get; set; }
         public int SlotId { get; set; }
+        public string? Room { get; set; }
+        public int Id { get; set; }
 
         public virtual Class Class { get; set; } = null!;
         public virtual Slot Slot { get; set; } = null!;

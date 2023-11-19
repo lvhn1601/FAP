@@ -42,11 +42,6 @@
             // The signed-in user info.
             let user = result.user;
 
-            if (!user.email.includes('@@fpt.edu.vn')) {
-                alert('Mail FPT require');
-                return;
-            }
-
             let form = document.querySelector('.loginGoogleForm');
 
             let input = form.querySelector('#emailInput');

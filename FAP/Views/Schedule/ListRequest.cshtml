@@ -1,0 +1,46 @@
+﻿
+
+@model List<Request>
+
+<table class="table w-75">
+	<thead>
+		<th>#</th>
+		<th>Class</th>
+		<th>From</th>
+		<th>To</th>
+		<th>Sended by</th>
+		<th></th>
+	</thead>
+	<tbody>
+		@foreach (Request req in Model)
+		{
+			<tr>
+				<td>@req.Id</td>
+				<td>@req.Class.Name</td>
+				<td>@(req.FromDate.ToString("dd/MM/yyyy"))</td>
+				<td>@(req.ToDate.ToString("dd/MM/yyyy"))</td>
+				<td>@req.SendBy</td>
+				<td>
+					<form>
+						@if (req.Status == 0)
+						{
+							<a href="updateStatus?id=@req.Id&status=1">Approve</a>
+							<a href="updateStatus?id=@req.Id&status=2">Reject</a>
+						}
+						else
+						{
+							if (req.Status == 1)
+							{
+								<span> Approved </span>
+							}
+							else
+							{
+								<span> Rejected </span>
+							}
+						}
+					</form>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>

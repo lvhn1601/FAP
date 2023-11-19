@@ -8,6 +8,7 @@ namespace FAP.Models
         public Class()
         {
             ClassSchedules = new HashSet<ClassSchedule>();
+            Requests = new HashSet<Request>();
         }
 
         public int Id { get; set; }
@@ -21,5 +22,6 @@ namespace FAP.Models
         public virtual Subject SubjectCodeNavigation { get; set; } = null!;
         public virtual Account TeacherCodeNavigation { get; set; } = null!;
         public virtual ICollection<ClassSchedule> ClassSchedules { get; set; }
+        public virtual ICollection<Request> Requests { get; set; }
     }
 }

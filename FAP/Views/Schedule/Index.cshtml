@@ -69,14 +69,15 @@
                 @if (scheduleItem != null)
                 {
                     <div>
-                        <div class="accent-green-gradient p-2">
-                            <div class="btn" style="position: absolute; right: 0; top: 0;">
-                                <i class="uil uil-setting"></i>
-                            </div>
+                        <div class="accent-cyan-gradient p-2">
+
                             <strong>@scheduleItem.Class.SubjectCode</strong>
                             <div style="font-size: 12px">
+                                <div style="position: absolute; top: 0px; right: 0px">
+                                    <button class="btn" onclick="showRequest(@scheduleItem.Class.Id, '@scheduleItem.Date.ToString("yyyy-MM-dd")', @scheduleItem.Slot.Id)" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><i class="uil uil-expand-from-corner"></i></button>
+                                </div>
                                 <div>Class: @scheduleItem.Class.Name</div>
-                                <div>Room: BE-316</div>
+                                <div>Room: @scheduleItem.Room</div>
                                 <div>Time: @scheduleItem.Slot.Start - @scheduleItem.Slot.End</div>
                             </div>
                         </div>
@@ -91,6 +92,81 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 60vw">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Request change Schedule</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="Schedule/ChangeSchedule" method="post" id="requestForm">
+                    <div>
+                        <div class="h6">Current Schedule:</div>
+                        <div class="d-flex ms-4">
+                            <div class="w-25 mb-3 me-2">
+                                <label for="currentClass" class="form-label">Class</label>
+                                <select class="form-control" id="currentClass" name="currentClass" readonly>
+                                    @foreach (Class cl in ViewBag.listClass)
+                                    {
+                                        <option value="@cl.Id">@cl.Name @cl.SubjectCode</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="w-25 mb-3 me-2">
+                                <label for="currentDate" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="currentDate" name="currentDate" readonly>
+                            </div>
+                            <div class="w-25 mb-3 me-2">
+                                <label for="currentSlot" class="form-label">Slot</label>
+                                <select class="form-control" id="currentSlot" name="currentSlot" readonly>
+                                    @foreach (Slot slot in ViewBag.slots)
+                                    {
+                                        <option value="@slot.Id">Slot @slot.Id</option>
+                                    }
+                                    
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="h6">Move to Schedule:</div>
+                        <div class="d-flex ms-4">
+                            <div class="w-25 mb-3 me-2">
+                                <label for="moveClass" class="form-label">Class</label>
+                                <select class="form-control disabled" id="moveClass" name="moveClass" readonly>
+                                    @foreach (Class cl in ViewBag.listClass)
+                                    {
+                                        <option value="@cl.Id">@cl.Name @cl.SubjectCode</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="w-25 mb-3 me-2">
+                                <label for="moveDate" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="moveDate" name="moveDate" required>
+                            </div>
+                            <div class="w-25 mb-3 me-2">
+                                <label for="moveSlot" class="form-label">Slot</label>
+                                <select class="form-control disabled" id="moveSlot" name="moveSlot">
+                                    @foreach (Slot slot in ViewBag.slots)
+                                    {
+                                        <option value="@slot.Id">Slot @slot.Id</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('requestForm').submit()">Send Request</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     document.getElementById('WeekSelector').addEventListener('change', () => {
         window.location.href = "Schedule?year=" + document.getElementById('YearSelector').value + "&week=" + document.getElementById('WeekSelector').value;
@@ -99,4 +175,16 @@
     document.getElementById('YearSelector').addEventListener('change', () => {
         window.location.href = "Schedule?year=" + document.getElementById('YearSelector').value;
     });
+
+    let curClass = document.getElementById('currentClass');
+    let curDate = document.getElementById('currentDate');
+    let curSlot = document.getElementById('currentSlot');
+    let moveClass = document.getElementById('moveClass');
+
+    function showRequest(classId, date, slot) {
+        curClass.value = classId;
+        moveClass.value = classId;
+        curDate.value = date;
+        curSlot.value = slot;
+    }
 </script>

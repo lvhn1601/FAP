@@ -1,0 +1,100 @@
+﻿<link rel="stylesheet" href="~/css/schedule.css" />
+@{
+    ViewData["Title"] = "School Timetable";
+}
+@using System.Globalization
+@model List<ClassSchedule>
+
+<h2>Class Schedule</h2>
+
+
+@{
+    DateTime startDate = new DateTime(ViewBag.year, 1, 1);
+    int daysToFirstDay = (int)startDate.DayOfWeek - (int)DayOfWeek.Monday;
+    startDate = startDate.AddDays(-daysToFirstDay);
+    DateTime endDate = startDate.AddYears(1).AddDays(-1);
+
+    List<SelectListItem> weekOptions = new List<SelectListItem>();
+
+    int weekNumber = 1;
+
+    while (startDate <= endDate)
+    {
+        DateTime endOfWeek = startDate.AddDays(6);
+
+        string optionText = $"{startDate:dd/MM} - {endOfWeek:dd/MM}";
+
+        weekOptions.Add(new SelectListItem { Text = optionText, Value = weekNumber.ToString(), Selected = weekNumber == ViewBag.weekNumber && ViewBag.year == startDate.Year });
+
+        startDate = startDate.AddDays(7);
+        weekNumber++;
+    }
+}
+
+<div class="w-50 d-flex">
+    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+        <button class="btn btn-outline-primary" onclick="window.location.href = 'Schedule?year=@ViewBag.year&week=@(ViewBag.weekNumber - 1)'">Prev</button>
+        <button class="btn btn-outline-primary" onclick="window.location.href = 'Schedule?year=@ViewBag.year&week=@(ViewBag.weekNumber + 1)'">Next</button>
+    </div>
+    @Html.DropDownList("WeekSelector", weekOptions, new { @class = "form-control w-50 mx-2" })
+    <select class="form-control w-25" id="YearSelector">
+        @for (int year = DateTime.Now.Year - 2; year <= DateTime.Now.Year + 1; year++)
+        {
+            <option value="@year" selected="@(ViewBag.year == year)">
+                @year
+            </option>
+        }
+    </select>
+</div>
+
+<div class="timetable w-100 shadow p-2 mt-4" style="height: 70vh">
+    <div class="week-names">
+        @for (int i = 0; i < 7; i++)
+        {
+            <div>@ViewBag.startDate.AddDays(i).DayOfWeek <br /> @ViewBag.startDate.AddDays(i).ToString("dd-MM-yyyy")</div>
+        }
+    </div>
+    <div class="time-interval">
+        @foreach (Slot slot in ViewBag.slots)
+        {
+            <div>Slot @slot.Id</div>
+        }
+    </div>
+    <div class="content">
+        @foreach (Slot slot in ViewBag.slots)
+        {
+            @for (int i = 0; i < 7; i++)
+            {
+                var scheduleItem = Model.FirstOrDefault(cs => cs.Date == ViewBag.startDate.AddDays(i) && cs.Slot == slot);
+                @if (scheduleItem != null)
+                {
+                    <div>
+                        <div class="accent-cyan-gradient p-2">
+
+                            <strong>@scheduleItem.Class.SubjectCode</strong>
+                            <div style="font-size: 12px">
+                                <div>Class: @scheduleItem.Class.Name</div>
+                                <div>Room: @scheduleItem.Room</div>
+                                <div>Time: @scheduleItem.Slot.Start - @scheduleItem.Slot.End</div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div></div>
+                }
+            }
+        }
+    </div>
+</div>
+
+<script>
+    document.getElementById('WeekSelector').addEventListener('change', () => {
+        window.location.href = "Schedule?year=" + document.getElementById('YearSelector').value + "&week=" + document.getElementById('WeekSelector').value;
+    });
+
+    document.getElementById('YearSelector').addEventListener('change', () => {
+        window.location.href = "Schedule?year=" + document.getElementById('YearSelector').value;
+    });
+</script>

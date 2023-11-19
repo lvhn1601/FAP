@@ -3,6 +3,13 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome @ViewBag.UserId</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-6">Welcome @ViewBag.UserId</h1>
+    @if (ViewBag.userRole == "Manager")
+    {
+        <a href="/Schedule/ListRequest">View Request list</a>
+    }
+    else
+    {
+        <a href="/Schedule">View my schedule</a>
+    }
 </div>

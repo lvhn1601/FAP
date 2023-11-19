@@ -62,6 +62,13 @@ namespace FAP.Controllers
             return View();
         }
 
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Remove("UserId");
+			HttpContext.Session.Remove("UserRole");
+			return Redirect("Login");
+        }
+
         public IActionResult Privacy()
 		{
 			return View();
